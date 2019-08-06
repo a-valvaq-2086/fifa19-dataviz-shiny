@@ -235,9 +235,9 @@ nationality_overall$Nationality <-
   nationality_overall$Nationality %>% 
   str_replace_all("Ivory Coast", "Cote d'Ivoire")
 
-View(nationality_overall$Nationality)
+# View(nationality_overall$Nationality)
 
-# saveRDS(nationality_overall, file="data/processed_nationality.rds")
+saveRDS(nationality_overall, file="data/processed_nationality.rds")
 
 # NOw we perfrom the left join, because we want the length of our map dataframe to keep the same
 # number of rows
