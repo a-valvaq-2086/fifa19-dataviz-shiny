@@ -80,8 +80,8 @@ shinyUI(
                       sidebarPanel(
                       
                         radioButtons('map_color', "Select the variable to color the map",
-                                     choices = c("Overall", "Numberof players", "Value (millions EUR)"),
-                                     selected = "Overall")
+                                     choices = c("Average Overall", "Average Value (millions EUR)"),
+                                     selected = "Average Overall")
                       ),
                       
                       mainPanel(

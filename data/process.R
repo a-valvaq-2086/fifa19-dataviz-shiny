@@ -154,4 +154,93 @@ nationality_overall <- players %>% group_by(Nationality) %>%
   summarise(avg = mean(Overall), avg_value = round(mean(`Value (M€)`), 1), count = n()) %>% 
   arrange(desc(avg))
 
-saveRDS(nationality_overall, file="data/processed_nationality.rds")
+# Now we standarize the names of the Fifa19 database and the world map shape
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Bosnia.*", "Bosnia and Herzegovina")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Central African Re.*", "Central African Republic")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("China P.*", "China")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("DR Cong.*", "Democratic Republic of the Congo")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("FYR Mace.*", "The former Yugoslav Republic of Macedonia")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Guinea Biss.*", "Guinea-Bissau")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Iran.*", "Iran (Islamic Republic of)")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Rep.*Ireland.*", "Ireland")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Korea DPR.*", "Korea, Democratic People's Republic of")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Korea Republic", "Korea, Republic of")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Libya", "Libyan Arab Jamahiriya")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Moldova", "Republic of Moldova")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all(".*& Príncipe", "Sao Tome and Principe")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all(".*Sudan", "Sudan")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all(".*Kitts Nevis", "Saint Kitts and Nevis")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Syria", "Syrian Arab Republic")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Tanzania", "United Republic of Tanzania")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Trinidad & Tobago", "Trinidad and Tobago")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Antigua & Barbuda", "Antigua and Barbuda")
+
+nationality_overall$Nationality <- 
+  nationality_overall$Nationality %>% 
+  str_replace_all("Ivory Coast", "Cote d'Ivoire")
+
+View(nationality_overall$Nationality)
+
+# saveRDS(nationality_overall, file="data/processed_nationality.rds")
+
+# NOw we perfrom the left join, because we want the length of our map dataframe to keep the same
+# number of rows
+world_spdf@data <- left_join(world_spdf@data, nationality_overall, by = c("NAME" = "Nationality"))
+
+# View(world_spdf)

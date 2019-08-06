@@ -43,10 +43,10 @@ shinyServer(function(input, output) {
     
     map_data <- switch (input$map_color,
       "Average Overall" = nationality_overall$avg,
-      "Average Value (M €)" = nationality_overall$avg_value
+      "Average Value (millions EUR)" = nationality_overall$avg_value
     )
     
-    m <- leaflet(data =) %>% 
+    m <- leaflet(data = world_spdf) %>% 
       addTiles() %>% 
       setView(lat=10, lng=0 , zoom=2) %>% 
       addPolygons(
@@ -62,7 +62,7 @@ shinyServer(function(input, output) {
       addLegend(pal = mypalette, 
                 values = y, 
                 opacity = 0.9, 
-                title = x, 
+                title = map_data, 
                 position = "bottomleft")
     
     m
