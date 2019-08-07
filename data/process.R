@@ -5,6 +5,7 @@ library(gsubfn)
 library(rgdal)
 library(leaflet)
 library(fmsb)
+library(data.table)
 setwd("D:/Mis Documentos/Master Big Data/4-5 Visualizacion avanzada/fifa19_dataviz/")
 
 # CONSTANTS
@@ -145,10 +146,6 @@ legend(x=1.6, legend = c(spider_chart[4,1], spider_chart[17000,1]), bty = "n", p
 # )
 world_spdf <- readOGR("data/world_shape_file/TM_WORLD_BORDERS_SIMPL-0.3.shp")
 
-# Creating a color palette for the map:
-my_palette <- colorNumeric("Greens", domain = world_spdf, na.color = "transparent")
-
-
 # Summarise Overall average by Country of Origin
 nationality_overall <- players %>% group_by(Nationality) %>% 
   summarise(avg = mean(Overall), avg_value = round(mean(`Value (M€)`), 1), count = n()) %>% 
@@ -235,12 +232,41 @@ nationality_overall$Nationality <-
   nationality_overall$Nationality %>% 
   str_replace_all("Ivory Coast", "Cote d'Ivoire")
 
-# View(nationality_overall$Nationality)
-
 saveRDS(nationality_overall, file="data/processed_nationality.rds")
 
-# NOw we perfrom the left join, because we want the length of our map dataframe to keep the same
-# number of rows
-world_spdf@data <- left_join(world_spdf@data, nationality_overall, by = c("NAME" = "Nationality"))
+# Now we merge our data with the spatial data.
+world_data <- sp::merge(world_spdf, nationality_overall, by.x = "NAME", by.y = "Nationality", duplicateGeoms = TRUE)
 
-# View(world_spdf)
+
+mybins <- c(0, 40, 50, 60, 70, 75, 80, 85, 90, 95, 100)
+pal <- colorNumeric("Blues", domain = world_data@data$count, na.color = "transparent")
+
+labels <- sprintf(
+  "<strong>%s</strong><br/> Avg. Overall = %g<br/>  Num. Players: %g",
+  world_data@data$NAME, world_data@data$avg, world_data@data$count) %>% 
+  lapply(htmltools::HTML)
+
+m <- leaflet(world_data) %>% 
+  addTiles() %>% 
+  addPolygons(
+    fillColor = ~pal(count),
+    weight = 2,
+    opacity = 1,
+    color = "white",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    highlight = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE),
+    label = labels,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto")) %>% 
+   addLegend(pal = pal, values = world_data$count, opacity = 0.7, title = "Avg Overall",
+             position = "bottomleft")
+  
+m
