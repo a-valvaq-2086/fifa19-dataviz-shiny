@@ -1,7 +1,6 @@
 # Loading the server
 library(shiny)
 library(rsconnect)
-library(data.table)
 library(tidyverse)
 library(broom)
 library(magrittr)
@@ -11,16 +10,13 @@ library(leaflet)
 library(fmsb)
 library(htmltools)
 
-# Load the data set
+# Load the scatter plot data
 players <- readRDS("data/processed_players.rds")
-world_spdf <- readOGR("data/world_shape_file/TM_WORLD_BORDERS_SIMPL-0.3.shp")
-nationality_overall <- readRDS("data/processed_nationality.rds")
 
+# Data and color vectors for spider chart
+spider_chart_data <- readRDS("data/spider_chart_data.rds")
+spider_colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9))
+spider_colors_in=c( rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4))
 
-# Color vectors for spider chart
-colors_border=c(rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9))
-colors_in=c(rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4))
-
-# Color vectors for the map colors
-map_overall <-  colorNumeric(palette = "Greens", na.color = "transparent")
-map_value <- colorNumeric(palette = "Blues", na.color = "transparent")
+# Loading data for the choropleth
+world_data <- readRDS("data/world_map_fifa_colored.rds")

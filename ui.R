@@ -1,9 +1,3 @@
-# The user interface logic
-
-players <- readRDS("data/processed_players.rds")
-nums <- sapply(players, is.numeric)
-vars_continuous <- names(players)[nums]
-
 # UI application with tabs
 shinyUI(
   navbarPage("Shiny Visualización Avanzada",
@@ -11,17 +5,17 @@ shinyUI(
                       mainPanel(
                         h1("Ejercicio Visualización Avanzada", align = "center"),
                         h2("Alejandro Valladares Vaquero", align = "center"),
-                        p("This app is an evaluated coursework for the", em("Master en Big Data - UNED")),
+                        p("This app is an evaluated coursework for the module ", em("Visualización avanzada "),
+                          em("Master en Big Data - UNED")),
                         p("The dataset is the FIFA 19 complete dataset that can be obtained from Kaggle:\n
                           https://www.kaggle.com/karangadiya/fifa19"),
                         p("The database contains over 18,000 players from all around the globe. With more than
-                          80 features"),
-                        p("The data has been lightly processed to account for categorical variables, transform
-                          some features such as height, weight, wage and release clause"),
+                          80 features each one. To simplify the dataset I have drop some columns that are not relevant for
+                          the visualization (e.g. some features that the game uses for its internal game mechanics)"),
                         p(""),
                         p(""),
-                        h2("¿Qué espero que incluyáis aquí?", align = "center"),
-                        h3("Como mínimo"),
+                        h2("Summary of the visualization app", align = "center"),
+                        h3(""),
                         p("The Shiny app is divided in three tabs. One is a player comparison, where you
                           can search two players from the complete DB, and compare its characteristics with
                           a spider plot"),
@@ -34,18 +28,18 @@ shinyUI(
                         p("Algún gráfico adicional en pestaña Trabajo adicional"),
                         h2("¿Qué componentes se deben entregar?"),
                         h5("1. El código R (ui.R / server.R) -por separado o en un .zip"),
-                        h5("2. La URL o dirección de shinyapps.io a la que se ha subido"),
-                        h5("IMPORTANTE: Si usáis vuestros datos deben estar incluidos o accesibles en internet")
+                        h5("2. La URL o dirección de shinyapps.io a la que se ha subido")
                         )),
              
              tabPanel("Scatterplot of Overall value",
                       sidebarPanel(
                         
-                        selectInput('x', 'Elige variable para eje X', 
-                                    choices = c("Age", "International Reputation"),
+                        selectInput('x', 'Choose the x-axis variable', 
+                                    choices = c("Age",
+                                                "International Reputation"),
                                     selected = "Age"),
                         
-                        selectInput('y', 'Elige variable para eje Y',
+                        selectInput('y', 'Choose the y-axis variable',
                                     choices = c("Overall", "Potential"),
                                     selected = "Overall")
                         # selectInput('color', 'Color', c('None', 'Tipo')),
@@ -65,9 +59,10 @@ shinyUI(
              tabPanel("Player Comparison",
                       sidebarPanel(
                         
-                        selectizeInput('spider_plot', "Search for both players", 
-                                       choices = players$Name, multiple = TRUE, 
-                                       options = list(maxItems = 2), selected = NULL)
+                        selectizeInput('spider_plot_input1', "Search players", 
+                                       choices = spider_chart_data$Name, multiple = TRUE,
+                                       options = list(maxItems = 2),
+                                       selected = "")
                       ),
                       
                       mainPanel(
@@ -86,7 +81,7 @@ shinyUI(
                       
                       mainPanel(
                         leafletOutput('world_map',
-                                   height=1000)
+                                      height=500)
                       )
              )
   )
