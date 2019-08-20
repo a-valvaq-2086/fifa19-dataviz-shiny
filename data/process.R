@@ -1,6 +1,5 @@
 # LOADING REQUIRED PACKAGES ====================================================
 library(tidyverse)
-library(magrittr)
 library(gsubfn)
 library(rgdal)
 library(leaflet)
@@ -69,7 +68,6 @@ players$`International Reputation` <- players$`International Reputation` %>%
 # Converting dates from --MM YYYY-- into years only ----------------------------
 players$Joined <- players$Joined %>% 
   str_replace_all("^.*([0-9]{4}$)", "\\1")
-unique(players$Joined)
 
 players$`Contract Valid Until` <- 
   players$`Contract Valid Until` %>% 
@@ -109,8 +107,15 @@ players$Wage <-
   str_replace_all(c("€" = "", "^$" = "0"))
 players$`Wage (K€)` <-  as.numeric(gsub('([a-zA-Z])', 'e+0', players$Wage))
 
-saveRDS(players,file="data/processed_players.rds") # saving as serialized file
 
+# Unite England, Northern Ireland, Scotland and Wales players into United Kingdom
+players$Nationality <- 
+  players$Nationality %>% 
+  str_replace_all(c( "England" = "United Kingdom", "Northern Ireland" = "United Kingdom",
+                     "Scotland" = "United Kingdom", "Wales" = "United Kingdom"))
+
+
+saveRDS(players,file="data/processed_players.rds") # saving as serialized file
 # End of players Preprocessing  ================================================
 
 
@@ -150,8 +155,8 @@ world_spdf <- readOGR("data/world_shape_file/TM_WORLD_BORDERS_SIMPL-0.3.shp")
 
 # Summarise the variables and aggregate by Nationality -------------------------
 nationality_overall <- players %>% group_by(Nationality) %>% 
-  summarise(avg = round(mean(Overall),0), avg_value = round(mean(`Value (M€)`), 1), count = n()) %>% 
-  arrange(desc(avg))
+  summarise(avg = round(mean(Overall),0), avg_value = round(mean(`Value (M€)`), 1),
+            count = n()) %>% arrange(desc(avg))
 
 # Now we make equal the names of the Fifa19 database and the world map shape ---
 nationality_overall$Nationality <- 
@@ -243,7 +248,7 @@ saveRDS(world_data, file = "data/world_map_fifa_colored.rds")
 
 # Define the color of the choropleth
 # mybins <- c(0, 40, 50, 60, 70, 75, 80, 85, 90, 95, 100)
-pal <- colorNumeric("Greens", domain = world_data@data$count, na.color = "transparent")
+pal <- colorNumeric("Reds", domain = world_data@data$count, na.color = "transparent")
 
 labels <- sprintf(
   "<strong>%s</strong><br/> Avg. Overall = %g<br/>  Num. Players: %g",
@@ -270,7 +275,7 @@ m <- leaflet(world_data) %>%
       style = list("font-weight" = "normal", padding = "3px 8px"),
       textsize = "15px",
       direction = "auto")) %>% 
-   addLegend(pal = pal, values = world_data$count, opacity = 0.7, title = "Avg Overall",
+   addLegend(pal = pal, values = world_data$count, opacity = 0.7, title = "Number of Players",
              position = "bottomleft")
   
 m
