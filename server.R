@@ -42,10 +42,10 @@ shinyServer(function(input, output, session) {
   
   output$spider_plot <- renderPlot({
 
-    data_spider <- input$spider_plot_input1
+    data_spider <- req(input$spider_plot_input1)
     
-    player1 <- as_tibble(filter(spider_chart_data, Name == data_spider[1]))
-    player2 <- as_tibble(filter(spider_chart_data, Name == data_spider[2]))
+    player1 <- as_tibble(filter(spider_chart_data, Name == data_spider[1])[1,])
+    player2 <- as_tibble(filter(spider_chart_data, Name == data_spider[2])[1,])
     
     if (length(data_spider) == 0) {
       s <- plot(1, type="n", axes=F, xlab="", ylab="")
@@ -86,7 +86,7 @@ shinyServer(function(input, output, session) {
     
     color_by <- switch (input$map_color,
       "Average Overall" = world_data@data$avg,
-      "Average Value (millions EUR)" = world_data@data$avg_value
+      "Number of players" = world_data@data$count
     )
     
     my_palette <- colorNumeric("Reds", domain = color_by, na.color = "transparent")
