@@ -53,27 +53,29 @@ shinyServer(function(input, output, session) {
     if (length(data_spider) == 1) {
       s <- radarchart(rbind(rep(100,7), rep(0,7), player1[2:8]), axistype=1 ,
                       #custom polygon
-                      pcol=spider_colors_border[1] , pfcol=spider_colors_in[1], plwd=4,
+                      pcol=spider_colors_border[1] , pfcol=spider_colors_in[1], plwd=2,
+                      pdensity=c(5), pangle = c(45),
                       #custom the grid
                       cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(40,100,10), cglwd=0.8,
                       #custom labels
                       vlcex=0.8
       )
       # Add a legend
-      legend(x=1.6, legend = c(player1[1]), bty = "n",
+      legend(x=1.0,y=1.2, legend = c(player1[1]), bty = "n",
              pch=20 , col=spider_colors_in , text.col = "black", cex=1.2, pt.cex=3)
     }
     else {
     s <- radarchart(rbind(rep(100,7), rep(0,7), player1[2:8], player2[2:8]), axistype=1 ,
                   #custom polygon
-                  pcol=spider_colors_border , pfcol=spider_colors_in , plwd=4 , plty=1,
+                  pcol=spider_colors_border , pfcol=spider_colors_in , plwd=2 , plty=1,
+                  pdensity=c(5, 20), pangle = c(45,-45),
                   #custom the grid
                   cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(40,100,10), cglwd=0.8,
                   #custom labels
                   vlcex=0.8
       )
       # Add a legend
-      legend(x=1.6, legend = c(player1[1], player2[1]), bty = "n",
+      legend(x=1.0,y=1.2, legend = c(player1[1], player2[1]), bty = "n",
              pch=20 , col=spider_colors_in , text.col = "black", cex=1.2, pt.cex=3)
     }
 
