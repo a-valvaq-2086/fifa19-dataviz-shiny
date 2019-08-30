@@ -1,37 +1,34 @@
 # UI application with tabs
 shinyUI(
-  navbarPage("Shiny Visualización Avanzada",
-             tabPanel("Descripción del trabajo",
+  navbarPage("Shiny App for FIFA19 DB Visualization",
+             tabPanel("App Description",
                       mainPanel(
-                        h1("Ejercicio Visualización Avanzada", align = "center"),
+                        h1("\"Visualización Avanzada\" Coursework", align = "center"),
                         h2("Alejandro Valladares Vaquero", align = "center"),
-                        p("This app is an evaluated coursework for the module ", em("Visualización avanzada "),
-                          em("Master en Big Data - UNED")),
-                        p("The dataset is the FIFA 19 complete dataset that can be obtained from Kaggle:\n
-                          https://www.kaggle.com/karangadiya/fifa19"),
-                        p("The database contains over 18,000 players from all around the globe. With more than
-                          80 features each one. To simplify the dataset I have drop some columns that are not relevant for
-                          the visualization (e.g. some features that the game uses for its internal game mechanics)"),
+                        p("This is a Shinny App for the final coursework of the module ", em("Advanced Visualization "),
+                          "of the ", strong("Masters Desgree in Big Data - UNED")),
+                        p("The data set is the complete DB of the", strong("FIFA19"), " game, which can be downloaded from:"),
+                        a(href="https://www.kaggle.com/karangadiya/fifa19", "https://www.kaggle.com/karangadiya/fifa19"),
+                        p(""),
+                        p("The database comprises over ", strong("18,000 players"), " from all around the globe. Each player has more than
+                          80 features."),
+                        p("To simplify the dataset I have drop some columns that are not relevant for
+                          the visualization (e.g. some features that the game uses for its internal game mechanics)."),
                         p(""),
                         p(""),
                         h2("Summary of the visualization app", align = "center"),
                         h3(""),
-                        p("The Shiny app is divided in three tabs. One is a player comparison, where you
-                          can search two players from the complete DB, and compare its characteristics with
-                          a spider plot"),
-                        p("Secondly, you can find several plots, where you can see more info of the players skill set
-                          some statistical representations of the data set and visualize the data"),
-                        p("In the last tab you can find a World Map where you can plot different mean quantities,
-                          such as Overal skill, Wages, Age depending on the League where the players Club, or their country
-                          of origin"),
-                        h3("Deseable pero no imprescindible"),
-                        p("Algún gráfico adicional en pestaña Trabajo adicional"),
-                        h2("¿Qué componentes se deben entregar?"),
-                        h5("1. El código R (ui.R / server.R) -por separado o en un .zip"),
-                        h5("2. La URL o dirección de shinyapps.io a la que se ha subido")
-                        )),
+                        p("I divided the app in three tabs:"),
+                        p(""),
+                        p(strong("1)"), " The first one, represents an overall database ", strong("scatter plot"), " , where you can compare different features, and see if you
+                        can get any insight of any relationship."),
+                        p(""),
+                        p(strong("2)"), " The second one is a ", strong("radar plot"), " comparison typical of this kind of games, where you can
+                          can search for two players and compare them visually"),
+                        p(""),
+                        p(strong("3)"), " Is a Leaflet ", strong("interactive"), " choropleth world map coloured by ", strong("Average Overall"), " and ", strong("Number of Players"), " per country"))),
              
-             tabPanel("Scatterplot of Overall value",
+             tabPanel("Feature Explorer (Scatter Plot)",
                       sidebarPanel(
                         
                         selectInput('x', 'Choose the x-axis variable', 
@@ -59,7 +56,7 @@ shinyUI(
              tabPanel("Player Comparison",
                       sidebarPanel(
                         
-                        selectizeInput('spider_plot_input1', "Search players", 
+                        selectizeInput('spider_plot_input1', "Search for players to compare:", 
                                        choices = spider_chart_data$Name, multiple = TRUE,
                                        options = list(maxItems = 2),
                                        selected = "")

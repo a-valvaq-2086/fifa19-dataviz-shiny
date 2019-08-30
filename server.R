@@ -13,7 +13,8 @@ shinyServer(function(input, output, session) {
       "Potential" = players$Potential)
     
     p <- ggplot(players, 
-                aes_string(x=data_x, y=data_y)) + geom_point() 
+                aes_string(x=data_x, y=data_y)) + geom_point() +
+      ggtitle("Database Explorer") + xlab(input$x) + ylab(input$y)
     
     
     # if (input$color != 'None')
@@ -91,7 +92,7 @@ shinyServer(function(input, output, session) {
       "Number of players" = world_data@data$count
     )
     
-    my_palette <- colorNumeric("Reds", domain = color_by, na.color = "transparent")
+    my_palette <- colorNumeric("OrRd", domain = color_by, na.color = "transparent")
     
     labels <- sprintf(
       "<strong>%s</strong><br/> Avg. Overall = %g<br/>  Num. Players: %g",
@@ -111,7 +112,7 @@ shinyServer(function(input, output, session) {
           weight = 5,
           color = "#666",
           dashArray = "",
-          fillOpacity = 0.7,
+          fillOpacity = 0.9,
           bringToFront = TRUE),
         label = labels,
         labelOptions = labelOptions(
