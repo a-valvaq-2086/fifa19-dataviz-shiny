@@ -7,8 +7,9 @@ library(fmsb)
 library(data.table)
 
 # CONSTANTS ====================================================================
-FEET_TO_METERS = 3.84
+FEET_TO_CM   = 30.84
 INCHES_TO_CM = 2.54
+LBS_TO_KG    = 0.454
 
 # 1 - Players pre-processing ===================================================
 
@@ -78,7 +79,7 @@ players <- players %>%
   separate(Height, c("Height_ft", "Height_in"), sep = "'")
 
 players <- players %>% 
-  mutate("Height (cm)" = round(as.numeric(Height_ft) * FEET_TO_METERS + 
+  mutate("Height (cm)" = round(as.numeric(Height_ft) * FEET_TO_CM + 
                                  as.numeric(Height_in) * INCHES_TO_CM))
 
 # Preprocess weight column (from lbs to kg) ------------------------------------
@@ -87,7 +88,35 @@ players <- rename(players, "Weight_lbs" = Weight)
 players$Weight_lbs <- players$Weight_lbs %>% 
   str_replace_all("lbs", "")
 
-players$`Weight (kg)` <- round(as.numeric(players$Weight_lbs))
+players$`Weight (kg)` <- round(as.numeric(players$Weight_lbs)*LBS_TO_KG)
+
+# Positions pre-processing, converting to Goalkeeper, Defender, Midfielder and Attacker
+players$Position_simple <- 
+  players$Position %>% 
+  str_replace_all("GK", "Goalkeeper")
+
+players$Position_simple <- 
+  players$Position_simple %>% 
+  str_replace_all(c("^CB$" = "Defender", "^LCB$" = "Defender", "^RCB$" = "Defender",
+                    "^LB$" = "Defender", "^RB$" = "Defender", "^LWB$" = "Defender",
+                    "^RWB$" = "Defender"))
+
+players$Position_simple <- 
+  players$Position_simple %>% 
+  str_replace_all(c("^CM$" = "Midfielder", "^LDM$" = "Midfielder", "^LAM$" = "Midfielder",
+                "^RDM$" = "Midfielder", "^RAM$" = "Midfielder", "^CDM$" = "Midfielder",
+                "^CAM$" = "Midfielder", "^LM$" = "Midfielder", "^RM$" = "Midfielder",
+                "^LCM$" = "Midfielder", "^RCM$" = "Midfielder"))
+
+players$Position_simple <- 
+  players$Position_simple %>% 
+  str_replace_all(c("^ST$" = "Attacker", "^CF$" = "Attacker", "^LW$" = "Attacker",
+                    "^RW$" = "Attacker", "^LS$" = "Attacker", "^RS$" = "Attacker",
+                    "^LF$" = "Attacker", "^RF$" = "Attacker"))
+
+players$Position_simple <- 
+  players$Position_simple %>% 
+  str_replace_all("^$", "N/A")
 
 # Preprocessing Wage, Value and Release Clause columns -------------------------
 # from €xxxx.xxM or €xxx.xxK to just XXX in millions of €
@@ -95,17 +124,17 @@ players$`Weight (kg)` <- round(as.numeric(players$Weight_lbs))
 players$`Release Clause` <- 
   players$`Release Clause` %>%
   str_replace_all(c("€"="", "^$" = "0"))
-players$`Release Clause (M€)` <- as.numeric(gsubfn('([a-zA-Z])', list(M='e+0', K='e-3'), players$`Release Clause`))
+players$`Release Clause (M EUR)` <- as.numeric(gsubfn('([a-zA-Z])', list(M='e+0', K='e-3'), players$`Release Clause`))
 
 players$Value <- 
   players$Value %>% 
   str_replace_all(c("€" = "", "^$" = "0"))
-players$`Value (M€)` <- as.numeric(gsubfn('([a-zA-Z])', list(M='e+0', K='e-3'), players$Value))
+players$`Value (M EUR)` <- as.numeric(gsubfn('([a-zA-Z])', list(M='e+0', K='e-3'), players$Value))
 
 players$Wage <- 
   players$Wage %>% 
   str_replace_all(c("€" = "", "^$" = "0"))
-players$`Wage (K€)` <-  as.numeric(gsub('([a-zA-Z])', 'e+0', players$Wage))
+players$`Wage (K EUR)` <-  as.numeric(gsub('([a-zA-Z])', 'e+0', players$Wage))
 
 
 # Unite England, Northern Ireland, Scotland and Wales players into United Kingdom
@@ -155,7 +184,7 @@ world_spdf <- readOGR("data/world_shape_file/TM_WORLD_BORDERS_SIMPL-0.3.shp")
 
 # Summarise the variables and aggregate by Nationality -------------------------
 nationality_overall <- players %>% group_by(Nationality) %>% 
-  summarise(avg = round(mean(Overall),0), avg_value = round(mean(`Value (M€)`), 1),
+  summarise(avg = round(mean(Overall),0), avg_value = round(mean(`Value (M EUR)`), 1),
             count = n()) %>% arrange(desc(avg))
 
 # Now we make equal the names of the Fifa19 database and the world map shape ---

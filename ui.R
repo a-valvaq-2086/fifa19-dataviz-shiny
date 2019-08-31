@@ -22,6 +22,10 @@ shinyUI(
                         p(""),
                         p(strong("1)"), " The first one, represents an overall database ", strong("scatter plot"), " , where you can compare different features, and see if you
                         can get any insight of any relationship."),
+                        p("-NB: how the value and wages increase exponentially with the Overall quality"),
+                        p("-It is clearly noticeable that some of the best players (the so-called 'franchise players') are overvalued with respect other outstanding players"),
+                        p("-Is interesting to compare physical characteristics like weight, or height with performance attributes"),                        
+                        p(""),
                         p(""),
                         p(strong("2)"), " The second one is a ", strong("radar plot"), " comparison typical of this kind of games, where you can
                           can search for two players and compare them visually"),
@@ -33,18 +37,24 @@ shinyUI(
                         
                         selectInput('x', 'Choose the x-axis variable', 
                                     choices = c("Age",
-                                                "International Reputation"),
-                                    selected = "Age"),
+                                                "Height (cm)",
+                                                "Weight (kg)",
+                                                "Value (M EUR)",
+                                                "Wage (K EUR)",
+                                                "Release Clause (M EUR)"),
+                                    selected = "Value (M EUR)"),
                         
                         selectInput('y', 'Choose the y-axis variable',
-                                    choices = c("Overall", "Potential"),
-                                    selected = "Overall")
-                        # selectInput('color', 'Color', c('None', 'Tipo')),
+                                    choices = c("Overall", "Potential", "Acceleration",
+                                                "Sprint Speed", "Shot Power",
+                                                "Heading Accuracy", "Stamina",
+                                                "Strength", "Agility",
+                                                "Jumping"),
+                                    selected = "Overall"),
+                        selectInput('color', 'Color', c('None', 'Position')),
                         
-                        # checkboxInput('lm', 'Línea de Regresión'),
-                        # checkboxInput('smooth', 'Suavizado LOESS'),
-                        
-                        # selectInput('facet_row', 'Elige variable para facetas por filas', c(None='.', categoricas))
+                        checkboxInput('lm', 'Regression Line'),
+                        checkboxInput('smooth', 'Local Regression - LOESS')
                       ),
                       
                       mainPanel(

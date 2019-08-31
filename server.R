@@ -6,28 +6,38 @@ shinyServer(function(input, output, session) {
     
     data_x <- switch (input$x,
       "Age" = players$Age,
-      "International Reputation" = players$`International Reputation`)
+      "Height (cm)" = players$`Height (cm)`,
+      "Weight (kg)" = players$`Weight (kg)`,
+      "Value (M EUR)"  = players$`Value (M EUR)`,
+      "Wage (K EUR)"   = players$`Wage (K EUR)`,
+      "Release Clause (M EUR)" = players$`Release Clause (M EUR)`
+      )
     
     data_y <- switch (input$y,
-      "Overall" = players$Overall,
-      "Potential" = players$Potential)
+      "Overall"      = players$Overall,
+      "Potential"    = players$Potential,
+      "Acceleration" = players$Acceleration,
+      "Sprint Speed" = players$SprintSpeed,
+      "Shot Power"   = players$ShotPower,
+      "Heading Accuracy" = players$HeadingAccuracy,
+      "Stamina"  = players$Stamina,
+      "Strength" = players$Strength, 
+      "Agility"  = players$Agility,
+      "Jumping"  = players$Jumping
+    )
     
+    theme_update(plot.title = element_text(hjust = 0.5, size = 18))
     p <- ggplot(players, 
                 aes_string(x=data_x, y=data_y)) + geom_point() +
       ggtitle("Database Explorer") + xlab(input$x) + ylab(input$y)
     
     
-    # if (input$color != 'None')
-    #   p <- p + aes_string(color=input$color)
-    # 
-    # facets <- paste(input$facet_row, "~ .")
-    # if (facets != '. ~ .')
-    #   p <- p + facet_grid(facets)
-    # 
-    # if (input$lm)
-    #   p <- p + geom_smooth(method='lm',formula=y~x, na.rm = T)
-    # if (input$smooth)
-    #   p <- p + geom_smooth(method='loess',formula=y~x, na.rm = T)
+    if (input$color != 'None')
+      p <- p + aes_string(color="Position_simple")
+    if (input$lm)
+      p <- p + geom_smooth(method='lm',formula=y~x, na.rm = T)
+    if (input$smooth)
+      p <- p + geom_smooth(method='loess',formula=y~x, na.rm = T)
     
     print(p)
   }) # End of the Scatter Plot
